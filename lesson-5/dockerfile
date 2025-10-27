@@ -1,0 +1,29 @@
+# Base image
+FROM agrigorev/zoomcamp-model:2025
+
+# Use a lightweight Python image (optional override)
+FROM python:3.8.12-slim
+
+# Install pipenv
+RUN pip install pipenv
+
+RUN pip install fastapi
+
+# Set working directory
+WORKDIR /app
+
+
+# Copy dependency files
+COPY Pipfile Pipfile.lock ./
+
+# Install dependencies
+RUN pipenv install --deploy --system
+
+# Copy the rest of your app
+COPY . .
+
+RUN pip install fastapi uvicorn requests
+
+# Default command
+CMD ["python", "client.py"]
+
