@@ -23,8 +23,6 @@ df.head()
 
 df.shape
 df = df.drop(['PatientID', 'DoctorInCharge'], axis=1) # Dropping the Columns that have IDs or Data that is unpredictable
-df.shape
-
 df.head(10)
 
 cat_df = df.select_dtypes(include=[object]) # Checking whether categorical columns exist inside the data frame
@@ -70,7 +68,6 @@ y_test = df_test.Diagnosis.values
 del df_train['Diagnosis']
 del df_val['Diagnosis']
 del df_test['Diagnosis'] 
-
 
 # Scale features
 scaler = StandardScaler()
@@ -199,12 +196,13 @@ df_sorted = df_results.sort_values("CV Mean AUC", ascending=False)
 print(df_sorted.iloc[0].Model)
 
 # save the model to pickle
-model_file = 'random_forest_tuned' 
+model_file = 'random_forest_model.pkl' 
 
 f_out = open(model_file, 'wb') 
-pickle.dump((df_sorted.iloc[0].Model), f_out)
+pickle.dump((best_model), f_out)
 model_file
 f_out.close()
+joblib.dump("random_forest_model", "random_forest_model_tuned.pkl")
 
 # load the model from pickle
 with open(model_file, 'rb') as f_in:
@@ -287,6 +285,9 @@ print("Recall:", recall_score(y_test, y_pred))
 print("F1 Score:", f1_score(y_test, y_pred))
 print("----------------------------------------------------------")
 print("\nConfusion Matrix:\n", confusion_matrix(y_test, y_pred))
+print("\n----------------------------------------------------------")
+print("\nClassification Report:\n", classification_report(y_test, y_pred))
+print("----------------------------------------------------------")
 
-# Joblib for Usage in Production
 joblib.dump(random_forest_tuned, "random_forest_model_tuned.pkl") # Saving the fine-tuned model for production (Overall Accuracy of ~96%)
+# Joblib for Usage in Production
