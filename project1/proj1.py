@@ -199,7 +199,7 @@ print(df_sorted.iloc[0].Model)
 model_file = 'random_forest_model.pkl' 
 
 f_out = open(model_file, 'wb') 
-pickle.dump((best_model), f_out)
+pickle.dump(best_model, f_out)
 model_file
 f_out.close()
 joblib.dump("random_forest_model", "random_forest_model_tuned.pkl")
@@ -230,65 +230,3 @@ print("\n----------------------------------------------------------")
 print("\nClassification Report:\n", classification_report(y_test, y_pred))
 print("----------------------------------------------------------")
 
-# Realised that the scores are great, apart from the Recall which I would like to be higher
-# Using RandomizedSearchCV to fine-tune the Random Forest Classifier
-params = {
-    'n_estimators': [100, 200, 300, 400, 500],
-    'max_depth': [None, 5, 10, 15, 20, 30],
-    'min_samples_split': [2, 4, 6, 8, 10],
-    'min_samples_leaf': [1, 2, 3, 4, 5],
-    'max_features': ['sqrt', 'log2', 0.5, None],
-    'bootstrap': [True, False],
-    'class_weight': [None, 'balanced', 'balanced_subsample']
-}
-
-random_forest_cv = RandomizedSearchCV(
-    estimator=random_forest,
-    param_distributions=params,
-    n_iter=50,
-    scoring='recall', # Optimising the Recall
-    cv=5,
-    verbose=2,
-    random_state=42,
-    n_jobs=-1
-)
-
-random_forest_cv.fit(df_train, y_train)
-
-# Checking the best parameters:
-print("----------------------------------------------------------")
-print("Best Recall Score (CV):", random_forest_cv.best_score_)
-print("----------------------------------------------------------")
-print("\nBest Parameters:\n", random_forest_cv.best_params_)
-print("----------------------------------------------------------")
-
-# Trying the Fine-tuned Random Forest Classifier
-random_forest_tuned = RandomForestClassifier(
-    n_estimators=200,
-    min_samples_split=2,
-    min_samples_leaf=3,
-    max_features=None,
-    max_depth=10,
-    class_weight='balanced',
-    bootstrap=True,
-    random_state=42
-)
-
-random_forest_tuned.fit(df_train, y_train)
-
-y_pred = random_forest_tuned.predict(df_test)
-
-# Testing the Predictions
-print("----------------------------------------------------------")
-print("Accuracy:", accuracy_score(y_test, y_pred))
-print("Precision:", precision_score(y_test, y_pred))
-print("Recall:", recall_score(y_test, y_pred))
-print("F1 Score:", f1_score(y_test, y_pred))
-print("----------------------------------------------------------")
-print("\nConfusion Matrix:\n", confusion_matrix(y_test, y_pred))
-print("\n----------------------------------------------------------")
-print("\nClassification Report:\n", classification_report(y_test, y_pred))
-print("----------------------------------------------------------")
-
-joblib.dump(random_forest_tuned, "random_forest_model_tuned.pkl") # Saving the fine-tuned model for production (Overall Accuracy of ~96%)
-# Joblib for Usage in Production
