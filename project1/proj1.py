@@ -203,6 +203,7 @@ pickle.dump((best_model), f_out)
 model_file
 f_out.close()
 joblib.dump("random_forest_model", "random_forest_model_tuned.pkl")
+print(f'the model is saved to {model_file}')
 
 # load the model from pickle
 with open(model_file, 'rb') as f_in:
