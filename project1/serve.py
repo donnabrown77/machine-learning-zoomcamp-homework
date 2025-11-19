@@ -41,42 +41,42 @@ patient = {
     "Forgetfulness": 1
 }
 
-patient_id = 4753
+# patient_id = 4753
 
-patient = {
-    "Age": 73,
-    "Gender": 0,
-    "Ethnicity": 3,
-    "EducationLevel": 1,
-    "BMI": 17.795882442817113,
-    "Smoking": 0,
-    "AlcoholConsumption": 19.55508452555359,
-    "PhysicalActivity": 7.844987790974517,
-    "DietQuality": 1.826334664579784,
-    "SleepQuality": 9.673574157961111,
-    "FamilyHistoryAlzheimers": 1,
-    "CardiovascularDisease": 0,
-    "Diabetes": 0,
-    "Depression": 0,
-    "HeadInjury": 0,
-    "Hypertension": 0,
-    "SystolicBP": 99,
-    "DiastolicBP": 116,
-    "CholesterolTotal": 284.1818577646338,
-    "CholesterolLDL": 153.3227621844376,
-    "CholesterolHDL": 69.77229186479597,
-    "CholesterolTriglycerides": 83.63832413899468,
-    "MMSE": 7.356248624670334,
-    "FunctionalAssessment": 5.895077345354194,
-    "MemoryComplaints": 0,
-    "BehavioralProblems": 0,
-    "ADL": 7.119547742738579,
-    "Confusion": 0,
-    "Disorientation": 1,
-    "PersonalityChanges": 0,
-    "DifficultyCompletingTasks": 1,
-    "Forgetfulness": 0
-}
+# patient = {
+#     "Age": 73,
+#     "Gender": 0,
+#     "Ethnicity": 3,
+#     "EducationLevel": 1,
+#     "BMI": 17.795882442817113,
+#     "Smoking": 0,
+#     "AlcoholConsumption": 19.55508452555359,
+#     "PhysicalActivity": 7.844987790974517,
+#     "DietQuality": 1.826334664579784,
+#     "SleepQuality": 9.673574157961111,
+#     "FamilyHistoryAlzheimers": 1,
+#     "CardiovascularDisease": 0,
+#     "Diabetes": 0,
+#     "Depression": 0,
+#     "HeadInjury": 0,
+#     "Hypertension": 0,
+#     "SystolicBP": 99,
+#     "DiastolicBP": 116,
+#     "CholesterolTotal": 284.1818577646338,
+#     "CholesterolLDL": 153.3227621844376,
+#     "CholesterolHDL": 69.77229186479597,
+#     "CholesterolTriglycerides": 83.63832413899468,
+#     "MMSE": 7.356248624670334,
+#     "FunctionalAssessment": 5.895077345354194,
+#     "MemoryComplaints": 0,
+#     "BehavioralProblems": 0,
+#     "ADL": 7.119547742738579,
+#     "Confusion": 0,
+#     "Disorientation": 1,
+#     "PersonalityChanges": 0,
+#     "DifficultyCompletingTasks": 1,
+#     "Forgetfulness": 0
+# }
 
 response = requests.post(url, json=patient)
 result = response.json()

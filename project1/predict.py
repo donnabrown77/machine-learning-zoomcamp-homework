@@ -10,6 +10,10 @@ expected_columns = saved["columns"]
 
 app = Flask(__name__)
 
+@app.route("/health", methods=["GET"])
+def health():
+    return jsonify({"status": "ok"}), 200
+
 @app.route("/predict", methods=["POST"])
 def predict():
     patient = request.get_json()
