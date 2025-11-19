@@ -131,6 +131,9 @@ fn
 auc = roc_auc_score(y_val, y_pred)
 print("AUC-ROC:", auc)
 
+# load data and split to df_train, y_train as you already do...
+# df_train (DataFrame without 'Diagnosis'), y_train (array or Series)
+
 models = {
     "LogisticRegression": (
         LogisticRegression(max_iter=500),
@@ -143,66 +146,51 @@ models = {
     ),
 
     "RandomForest": (
-        RandomForestClassifier(),
-        {"n_estimators": [100, 300],
-         "max_depth": [None, 10, 20]}
+        RandomForestClassifier(random_state=42),
+        {"n_estimators": [100, 300], "max_depth": [None, 10, 20]}
     ),
 
     "GradientBoosting": (
-        GradientBoostingClassifier(),
-        {"n_estimators": [100, 200],
-         "learning_rate": [0.05, 0.1]}
+        GradientBoostingClassifier(random_state=42),
+        {"n_estimators": [100, 200], "learning_rate": [0.05, 0.1]}
     ),
 }
 
-# Cross-validation evaluation helper
-def evaluate_with_cv(model, X, y):
-    scores = cross_val_score(model, X, y, cv=5, scoring='roc_auc')
-    return scores.mean(), scores.std()
+best_models = {}  # name -> (best_estimator_, best_score_)
 
-# Hyperparameter tuning with GridSearchCV
-summary_rows = []
-
-for name, (model, param_grid) in models.items():
-
-    print(f"🔍 Tuning {name}...")
-
-    # Pipeline with scaling (tree models ignore the scaler)
+for name, (base_model, param_grid) in models.items():
+    print(f"Tuning {name} ...")
     pipe = Pipeline([
         ("scaler", StandardScaler()),
-        ("model", model)
+        ("model", base_model)
     ])
 
-    grid = GridSearchCV(pipe, param_grid={"model__" + k: v for k, v in param_grid.items()},
-                        cv=5, scoring="roc_auc", n_jobs=-1)
+    # adapt param grid to pipeline naming
+    pg = {"model__" + k: v for k, v in param_grid.items()}
 
-    grid.fit(df_train, y_train)
+    grid = GridSearchCV(pipe, param_grid=pg, cv=5, scoring="roc_auc", n_jobs=-1)
+    grid.fit(df_train, y_train)  # df_train is the DataFrame (unscaled) used in training
 
-    best_model = grid.best_estimator_
-    mean_score, std_score = evaluate_with_cv(best_model, df_train, y_train)
+    best_models[name] = (grid.best_estimator_, grid.best_score_)
+    print(f"  Best CV AUC for {name}: {grid.best_score_:.4f}")
+    print(f"  Best params: {grid.best_params_}")
 
-    summary_rows.append({
-        "Model": name,
-        "Best Params": grid.best_params_,
-        "CV Mean AUC": mean_score,
-        "CV Std": std_score,
-    })
+# pick overall best by score
+best_name = max(best_models, key=lambda n: best_models[n][1])
+best_estimator, best_score = best_models[best_name]
 
-# Summary results table 
-df_results = pd.DataFrame(summary_rows)
-print(df_results.sort_values("CV Mean AUC", ascending=False))
+print(f"\nBest model overall: {best_name} (CV AUC = {best_score:.4f})")
 
-df_sorted = df_results.sort_values("CV Mean AUC", ascending=False)
-# print the best model name
-print(df_sorted.iloc[0].Model)
+# Save model and column order
+output = {
+    "model": best_estimator,
+    "columns": list(df_train.columns)  # preserve column order used to train
+}
 
-output_file = 'RandomForest.bin'
-output_file
+with open("model.bin", "wb") as f_out:
+    pickle.dump(output, f_out)
 
-
-f_out = open(output_file, 'wb') 
-pickle.dump(best_model, f_out)
-f_out.close()
+print("Saved model to model.bin")
 
 
 
