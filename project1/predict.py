@@ -4,7 +4,7 @@ from flask import Flask
 from flask import request
 from flask import jsonify
 
-model_file = 'random_forest_model.pkl'
+model_file = 'RandomForest.bin'
  
 with open(model_file, 'rb') as f_in:
     model = pickle.load(f_in)

@@ -193,23 +193,18 @@ df_results = pd.DataFrame(summary_rows)
 print(df_results.sort_values("CV Mean AUC", ascending=False))
 
 df_sorted = df_results.sort_values("CV Mean AUC", ascending=False)
+# print the best model name
 print(df_sorted.iloc[0].Model)
 
-# save the model to pickle
-model_file = 'random_forest_model.pkl' 
+output_file = 'RandomForest.bin'
+output_file
 
-f_out = open(model_file, 'wb') 
+
+f_out = open(output_file, 'wb') 
 pickle.dump(best_model, f_out)
-model_file
 f_out.close()
-joblib.dump("random_forest_model", "random_forest_model_tuned.pkl")
-print(f'the model is saved to {model_file}')
 
-# load the model from pickle
-with open(model_file, 'rb') as f_in:
-    model = pickle.load(f_in)
- 
-model
+
 
 # Trying out the Random Forest Classifier
 random_forest = RandomForestClassifier(random_state=42)
